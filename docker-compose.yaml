@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  mysql1:
+    image: mysql/mysql-server:8.0
+    container_name: mysql-node-1
+    hostname: mysql-node-1
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+      MYSQL_DATABASE: mydb
+    command:
+      - --server-id=1
+      - --log-bin=mysql-bin
+      - --gtid-mode=ON
+      - --enforce-gtid-consistency=ON
+      - --binlog-checksum=NONE
+      - --master-info-repository=TABLE
+      - --relay-log-info-repository=TABLE
+      - --transaction-write-set-extraction=XXHASH64
+      - --loose-group-replication-start-on-boot=off
+      - --loose-group-replication-local-address=mysql-node-1:33061
+      - --loose-group-replication-group-seeds=mysql-node-1:33061,mysql-node-2:33061
+      - --loose-group-replication-single-primary-mode=off
+      - --loose-group-replication-enforce-update-everywhere-checks=on
+      - --loose-group_replication_group_name=afa57fdd-bde5-40a0-bb4b-4ac46a2310fe
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./data1:/var/lib/mysql
+    networks:
+      - mysql-cluster-network
+
+  mysql2:
+    image: mysql/mysql-server:8.0
+    container_name: mysql-node-2
+    hostname: mysql-node-2
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+      MYSQL_DATABASE: mydb
+    command:
+      - --server-id=2
+      - --log-bin=mysql-bin
+      - --gtid-mode=ON
+      - --enforce-gtid-consistency=ON
+      - --binlog-checksum=NONE
+      - --master-info-repository=TABLE
+      - --relay-log-info-repository=TABLE
+      - --transaction-write-set-extraction=XXHASH64
+      - --loose-group-replication-start-on-boot=off
+      - --loose-group-replication-local-address=mysql-node-2:33061
+      - --loose-group-replication-group-seeds=mysql-node-1:33061,mysql-node-2:33061
+      - --loose-group-replication-single-primary-mode=off
+      - --loose-group-replication-enforce-update-everywhere-checks=on
+      - --loose-group_replication_group_name=afa57fdd-bde5-40a0-bb4b-4ac46a2310fe
+      - --relay-log=mysql-node-2-relay-bin
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./data2:/var/lib/mysql
+    networks:
+      - mysql-cluster-network
+
+volumes:
+  data1:
+    driver: local
+  data2:
+    driver: local
+
+networks:
+  mysql-cluster-network:
+    name: mysql-cluster-network
