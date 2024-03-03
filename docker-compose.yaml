@@ -20,12 +20,13 @@ services:
       - --master-info-repository=TABLE
       - --relay-log-info-repository=TABLE
       - --transaction-write-set-extraction=XXHASH64
-      - --loose-group-replication-start-on-boot=off
+      - --loose-group-replication-start-on-boot=on
       - --loose-group-replication-local-address=mysql-node-1:33061
       - --loose-group-replication-group-seeds=mysql-node-1:33061,mysql-node-2:33061
       - --loose-group-replication-single-primary-mode=off
       - --loose-group-replication-enforce-update-everywhere-checks=on
       - --loose-group_replication_group_name=afa57fdd-bde5-40a0-bb4b-4ac46a2310fe
+      - --relay-log=mysql-node-1-relay-bin
     ports:
       - "3306:3306"
     volumes:
@@ -52,7 +53,7 @@ services:
       - --master-info-repository=TABLE
       - --relay-log-info-repository=TABLE
       - --transaction-write-set-extraction=XXHASH64
-      - --loose-group-replication-start-on-boot=off
+      - --loose-group-replication-start-on-boot=on
       - --loose-group-replication-local-address=mysql-node-2:33061
       - --loose-group-replication-group-seeds=mysql-node-1:33061,mysql-node-2:33061
       - --loose-group-replication-single-primary-mode=off
